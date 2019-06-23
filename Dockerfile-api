@@ -1,0 +1,34 @@
+FROM nvcr.io/nvidia/pytorch:19.05-py3
+
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install curl -y
+
+RUN mkdir -p /src
+
+WORKDIR /src
+
+COPY GPT2 /src/GPT2
+COPY app.py /src/app.py
+
+COPY requirements.txt /src/requirements.txt
+
+RUN wget https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+RUN chmod +x Anaconda3-2019.03-Linux-x86_64.sh
+RUN bash Anaconda3-2019.03-Linux-x86_64.sh -b -p $HOME/miniconda
+
+RUN conda install --file requirements.txt
+
+
+
+RUN curl --output gpt2-pytorch_model.bin https://s3.amazonaws.com/models.huggingface.co/bert/gpt2-pytorch_model.bin
+
+
+RUN conda install --file requirements.txt
+
+RUN conda install -c anaconda flask 
+
+EXPOSE 5000
+
+#ENTRYPOINT ["python3"]
+#CMD ["app.py"]
